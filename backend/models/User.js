@@ -17,23 +17,7 @@ const userSchema = new mongoose.Schema({
   passwordHash: {
     type: String,
     required: true,
-  },
-  preferences: {
-    temperatureUnit: {
-      type: String,
-      enum: ["Celsius", "Fahrenheit"],
-      default: "Celsius",
-    },
-    notificationEnabled: {
-      type: Boolean,
-      default: true,
-    },
-    language: {
-      type: String,
-      enum: ["en", "es"],
-      default: "en",
-    },
-  },
+  }
 }, { timestamps: true });
 
 // Hash password before saving
