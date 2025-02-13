@@ -1,5 +1,7 @@
 import express from "express";
+import cors from 'cors';
 import dotenv from "dotenv";
+
 
 
 import { connectDb } from "./config/db.js";
@@ -15,7 +17,9 @@ dotenv.config();
 export const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
 const app = express();
+// Middleware.
 app.use(express.json()) // Middleware that allows to accept JSON data in the request body.
+app.use(cors());
 
 app.use("/api/auth", userRoutes);
 app.use("/api/plants/", plantRoutes);

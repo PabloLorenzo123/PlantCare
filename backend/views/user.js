@@ -24,12 +24,8 @@ router.post('/signup', async (req, res) => {
         const newUser = new User({
             name,
             email,
-            passwordHash: password, // Will be hashed before saving
+            passwordHash: password // This is hashed in the model before saving.
         });
-
-        // Hash the password before saving
-        const salt = await bcrypt.genSalt(10);
-        newUser.passwordHash = await bcrypt.hash(newUser.passwordHash, salt);
 
         // Save the new user to the database
         await newUser.save();
@@ -50,6 +46,43 @@ router.post('/signup', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Login Route (Newly Added)
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        // Check if user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: "There's no user with that email." });
+        }
+
+        // Validate password
+        console.log(password)
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
+
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid password" });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1h" });
+
+        // Respond with token and username
+        res.json({
+            message: "Login successful",
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
     }
 });
 

@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
   passwordHash: {
     type: String,
     required: true,
+    maxLength: 250,
   }
 }, { timestamps: true });
 
